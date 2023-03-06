@@ -59,7 +59,7 @@ public class TaskMetro {
     /**
      * 检查token是否过期
      */
-    @Scheduled(cron = "00 00 14 * * ?")
+    @Scheduled(cron = "0 0 14 * * ?")
     public void checkToken() {
         String aToken = Base64.decodeStr(authorization);
         String[] aTokens = aToken.split(",");
@@ -72,6 +72,7 @@ public class TaskMetro {
             MailUtils.sendMail(email, "您的token将在一天后过期，请尽快修改！");
         } else {
             System.out.println("token检查完成，未过期！");
+            MailUtils.sendMail(email, "token检查完成，未过期！");
         }
         String time = HttpUtil.get("https://webapi.mybti.cn/Home/GetSystemTime");
         System.out.println("服务器时间比较：");
@@ -80,7 +81,7 @@ public class TaskMetro {
     }
 
 
-    @Scheduled(cron = "00 00 12 * * ?")
+    @Scheduled(cron = "0 0 12 * * ?")
     public void startReservation() {
         if (!isReservation)
             return;
@@ -96,14 +97,14 @@ public class TaskMetro {
         param.set("snapshotTimeSlot", "0630-0930");
         param.set("timeSlot", time);
 
-        System.out.println("地铁预约参数组装完成" + param.toString());
+        System.out.println("地铁预约参数组装完成" + param);
 
         while (count < 5 && !flag) {
             System.out.println(LocalDateTime.now() + ": 第" + (count + 1) + "次请求预约接口");
             String resultStr = HttpRequest.post("https://webapi.mybti.cn/Appointment/CreateAppointment")
                     .header(Header.AUTHORIZATION, authorization)//头信息，多个头信息多次调用此方法即可
                     .header(Header.CONTENT_TYPE, "application/json;charset=UTF-8")
-                    .header("user-agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1")
+                    .header("user-agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36 QBCore/4.0.1295.400 QQBrowser/9.0.2524.400 Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2875.116 Safari/537.36 NetType/WIFI MicroMessenger/7.0.5 WindowsWechat")
                     .body(param.toString())
                     .timeout(10000)//超时，毫秒
                     .execute().body();
