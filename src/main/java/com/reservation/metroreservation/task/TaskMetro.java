@@ -72,6 +72,7 @@ public class TaskMetro {
             MailUtils.sendMail(email, "您的token将在一天后过期，请尽快修改！");
         } else {
             System.out.println("token检查完成，未过期！");
+            MailUtils.sendMail(email, "token检查完成，未过期！");
         }
         String time = HttpUtil.get("https://webapi.mybti.cn/Home/GetSystemTime");
         System.out.println("服务器时间比较：");
